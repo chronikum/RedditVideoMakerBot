@@ -30,7 +30,9 @@ def make_final_video(number_of_clips):
         audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
     audio_clips.insert(0, AudioFileClip(f"assets/mp3/title.mp3"))
     audio_concat = concatenate_audioclips(audio_clips)
-    audio_composite = CompositeAudioClip([audio_concat])
+    audio_background = AudioFileClip('background_sound/background.mp3').set_duration(audio_concat.duration)
+    new_audioclip = CompositeAudioClip([audio_background])
+    audio_composite = CompositeAudioClip([audio_concat, new_audioclip])
 
     # Gather all images
     image_clips = []
