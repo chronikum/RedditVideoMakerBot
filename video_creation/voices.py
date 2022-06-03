@@ -9,7 +9,7 @@ from num2words import num2words
 
 def create_text_with_fifteen(text, filename):
     fifteen = FifteenAPI(show_debug = True)
-    character = "The Narrator"
+    character = "Twilight Sparkle"
     fifteen.save_to_file(character, text, filename)
     
 #Replaces the number in the text with the spoken word.
@@ -18,8 +18,8 @@ def create_text_with_fifteen(text, filename):
 def replace_number_with_spoken_word(text):
     for number in text.split():
         if number.isdigit():
-            print("Replacing " + number)
             text = text.replace(number, num2words(int(number), lang="en_US"))
+    text = text.replace("%", "Percent")
     return text
 
 def save_text_to_mp3(reddit_obj):
@@ -34,13 +34,30 @@ def save_text_to_mp3(reddit_obj):
     # Create a folder for the mp3 files.
     Path("assets/mp3").mkdir(parents=True, exist_ok=True)
 
-    tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)
-    tts.save(f"assets/mp3/title.mp3")
+    useFifteenAI = 1 # do we use 15 ai for this video or not?
+    
+    reddit_obj["thread_title"] = replace_number_with_spoken_word(reddit_obj["thread_title"])
+    if (len(reddit_obj["thread_title"]) > 199):
+        create_text_with_fifteen(reddit_obj["thread_title"], f"assets/mp3/title")
+        os.system(f"ffmpeg -y -i assets/mp3/title.wav assets/mp3/title.mp3")
+    else:
+        tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)        
+        tts.save(f"assets/mp3/title.mp3")
+        useFifteenAI = 0
+        
     length += MP3(f"assets/mp3/title.mp3").info.length
-
-    for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
+    
+    print("If any comment is longer than 200 characters, we do not use 15.ai at all to stick to their terms.")
+    for idx0, comment in track(enumerate(reddit_obj["comments"]), "Validating..."):
+        comment["comment_body"] = comment["comment_body"].split("https://")[0]
+        comment["comment_body"] = replace_number_with_spoken_word(comment["comment_body"])
         if len(comment["comment_body"]) > 199:
-            # ! Stop creating mp3 files if the length is greater than 50 seconds. This can be longer, but this is just a good starting point
+            useFifteenAI = 0
+            
+    for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
+        comment_text = comment["comment_body"]
+        print(comment_text)
+        if useFifteenAI == 0:
             if length > 50:
                 break
             tts = gTTS(text=comment["comment_body"], lang="en", slow=False)
@@ -49,11 +66,8 @@ def save_text_to_mp3(reddit_obj):
         else:
             if length > 50:
                 break
-            comment_text = comment["comment_body"]
-            comment_text = comment_text.split("https://")[0]
-            comment_text = replace_number_with_spoken_word(comment_text)
             create_text_with_fifteen(comment_text, f"assets/mp3/{idx}")
-            os.system(f"ffmpeg -i assets/mp3/{idx}.wav assets/mp3/{idx}.mp3")
+            os.system(f"ffmpeg -y -i assets/mp3/{idx}.wav assets/mp3/{idx}.mp3")
             length += MP3(f"assets/mp3/{idx}.mp3").info.length
 
     print_substep("Saved Text to MP3 files successfully.", style="bold green")
