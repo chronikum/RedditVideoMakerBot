@@ -4,6 +4,9 @@ import random
 from dotenv import load_dotenv
 import os
 
+# lists all mods of a subreddit to filter out posts made by mods
+def listMods(reddit, subreddit):
+    return [str(moderator) for moderator in reddit.subreddit(subreddit).moderator()]
 
 def get_subreddit_threads():
 
@@ -35,9 +38,11 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
+    subReddits = ["AskReddit", "explainlikeimfive", "LifeProTips"]
+    randomSubReddit = random.choice(subReddits)
 
     if os.getenv("SUBREDDIT"):
-        subreddit = reddit.subreddit(os.getenv("SUBREDDIT"))
+        subreddit = reddit.subreddit(randomSubReddit)
     else:
         # ! Prompt the user to enter a subreddit
         try:
@@ -48,8 +53,8 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    threads = subreddit.hot(limit=10)
+    submission = list(threads)[random.randrange(0, 10)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     with open('video_title.txt', 'w') as f:
         f.write(submission.title)
@@ -60,12 +65,13 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            content["comments"].append(
-                {
-                    "comment_body": top_level_comment.body,
-                    "comment_url": top_level_comment.permalink,
-                    "comment_id": top_level_comment.id,
-                }
+            if (top_level_comment.author not in listMods(reddit, randomSubReddit)):
+                content["comments"].append(
+                    {
+                        "comment_body": top_level_comment.body,
+                        "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id,
+                    }
             )
 
     except AttributeError as e:
