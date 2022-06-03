@@ -59,6 +59,7 @@ def make_final_video(number_of_clips):
     title_text_imgage = ImageClip(f"background_sound/background.png").set_duration(5).set_position("top").resize(width=W - 100)
 
     final = CompositeVideoClip([background_clip, image_concat, title_text_imgage])
+    final = final.set_duration(60)
     final.write_videofile(
         "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
     )

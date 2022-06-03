@@ -34,10 +34,20 @@ def save_text_to_mp3(reddit_obj):
     # Create a folder for the mp3 files.
     Path("assets/mp3").mkdir(parents=True, exist_ok=True)
 
-    useFifteenAI = 1 # do we use 15 ai for this video or not?
+    useFifteenAI = 0 # do we use 15 ai for this video or not? (currently not activated anyway)
     
     reddit_obj["thread_title"] = replace_number_with_spoken_word(reddit_obj["thread_title"])
-    if (len(reddit_obj["thread_title"]) > 199):
+    
+    print("If any comment is longer than 200 characters, we do not use 15.ai at all to stick to their terms.")
+    for idx0, comment in track(enumerate(reddit_obj["comments"]), "Validating..."):
+        comment["comment_body"] = comment["comment_body"].split("https://")[0]
+        comment["comment_body"] = replace_number_with_spoken_word(comment["comment_body"])
+        if len(comment["comment_body"]) > 199:
+            useFifteenAI = 0
+    if len(reddit_obj["thread_title"]) > 199:
+        useFifteenAI = 0
+
+    if (useFifteenAI == 1):
         create_text_with_fifteen(reddit_obj["thread_title"], f"assets/mp3/title")
         os.system(f"ffmpeg -y -i assets/mp3/title.wav assets/mp3/title.mp3")
     else:
@@ -46,13 +56,6 @@ def save_text_to_mp3(reddit_obj):
         useFifteenAI = 0
         
     length += MP3(f"assets/mp3/title.mp3").info.length
-    
-    print("If any comment is longer than 200 characters, we do not use 15.ai at all to stick to their terms.")
-    for idx0, comment in track(enumerate(reddit_obj["comments"]), "Validating..."):
-        comment["comment_body"] = comment["comment_body"].split("https://")[0]
-        comment["comment_body"] = replace_number_with_spoken_word(comment["comment_body"])
-        if len(comment["comment_body"]) > 199:
-            useFifteenAI = 0
             
     for idx, comment in track(enumerate(reddit_obj["comments"]), "Saving..."):
         comment_text = comment["comment_body"]
