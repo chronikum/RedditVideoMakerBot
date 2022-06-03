@@ -6,6 +6,7 @@ from moviepy.editor import (
     concatenate_audioclips,
     CompositeAudioClip,
     CompositeVideoClip,
+	TextClip
 )
 from utils.console import print_step
 
@@ -54,9 +55,12 @@ def make_final_video(number_of_clips):
         ("center", "center")
     )
     image_concat.audio = audio_composite
-    final = CompositeVideoClip([background_clip, image_concat])
+    
+    title_text_imgage = ImageClip(f"background_sound/background.png").set_duration(5).set_position("top").resize(width=W - 100)
+
+    final = CompositeVideoClip([background_clip, image_concat, title_text_imgage])
     final.write_videofile(
-        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
+        "assets/final_video.mp4", fps=3, audio_codec="aac", audio_bitrate="192k"
     )
 
     for i in range(0, number_of_clips):
