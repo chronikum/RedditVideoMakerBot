@@ -52,7 +52,7 @@ def get_subreddit_threads():
     submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     with open('video_title.txt', 'w') as f:
-        f.write(submission.title + ". #shorts");
+        f.write(submission.title);
     try:
 
         content["thread_url"] = submission.url
