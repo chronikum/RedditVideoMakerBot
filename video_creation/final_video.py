@@ -60,7 +60,7 @@ def make_final_video(number_of_clips):
 
     final = CompositeVideoClip([background_clip, image_concat, title_text_imgage])
     final.write_videofile(
-        "assets/final_video.mp4", fps=3, audio_codec="aac", audio_bitrate="192k"
+        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
     )
 
     for i in range(0, number_of_clips):
