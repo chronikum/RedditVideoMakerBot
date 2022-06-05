@@ -1,3 +1,5 @@
+import os
+import sys
 from moviepy.editor import (
     VideoFileClip,
     AudioFileClip,
@@ -6,13 +8,13 @@ from moviepy.editor import (
     concatenate_audioclips,
     CompositeAudioClip,
     CompositeVideoClip,
-	TextClip
+    TextClip
 )
 from utils.console import print_step
+import multiprocessing
 
 
 W, H = 1080, 1920
-
 
 def make_final_video(number_of_clips):
     print_step("Creating the final video...")
@@ -27,9 +29,25 @@ def make_final_video(number_of_clips):
     )
     # Gather all audio clips
     audio_clips = []
-    for i in range(0, number_of_clips):
-        audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
+    audio_clips_used = 0
     audio_clips.insert(0, AudioFileClip(f"assets/mp3/title.mp3"))
+    for i in range(0, number_of_clips):
+        next_audio_clip = AudioFileClip(f"assets/mp3/{i}.mp3").duration
+        combined_length = sum([clip.duration for clip in audio_clips])
+        print(f"Current length is {combined_length} seconds")
+        if (combined_length + next_audio_clip) > 60:
+            print("Combined length would be over a minute, so we break here")
+            break
+        else:
+            print(f"new length is {next_audio_clip} seconds")
+            audio_clips_used += 1
+            audio_clips.append(AudioFileClip(f"assets/mp3/{i}.mp3"))
+    
+    if (audio_clips_used == 0):
+        print("No audio clips were used, so we break here to try again.")
+        os.execv(sys.argv[0], sys.argv)
+        return
+    
     audio_concat = concatenate_audioclips(audio_clips)
     audio_background = AudioFileClip('background_sound/background.mp3').set_duration(audio_concat.duration)
     new_audioclip = CompositeAudioClip([audio_background])
@@ -37,7 +55,7 @@ def make_final_video(number_of_clips):
 
     # Gather all images
     image_clips = []
-    for i in range(0, number_of_clips):
+    for i in range(0, audio_clips_used):
         image_clips.append(
             ImageClip(f"assets/png/comment_{i}.png")
             .set_duration(audio_clips[i + 1].duration)
@@ -59,10 +77,12 @@ def make_final_video(number_of_clips):
     title_text_imgage = ImageClip(f"background_sound/background.png").set_duration(5).set_position("top").resize(width=W - 100)
 
     final = CompositeVideoClip([background_clip, image_concat, title_text_imgage])
-    if (final.duration >= 60):
-        final = final.set_duration(59)
+    final = final.set_duration(audio_composite.duration) # we set the video length to the length of the audio
+    
+    number_of_threads = multiprocessing.cpu_count()
+    print("Writing the final video with {} threads...".format(number_of_threads))
     final.write_videofile(
-        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
+        "assets/final_video.mp4", fps=3, audio_codec="aac", audio_bitrate="192k", threads=number_of_threads, verbose=False
     )
 
     for i in range(0, number_of_clips):
