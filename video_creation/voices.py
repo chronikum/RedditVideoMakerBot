@@ -7,11 +7,6 @@ from utils.console import print_step, print_substep
 from rich.progress import track
 from num2words import num2words
 
-def create_text_with_fifteen(text, filename):
-    fifteen = FifteenAPI(show_debug = True)
-    character = "Twilight Sparkle"
-    fifteen.save_to_file(character, text, filename)
-    
 #Replaces the number in the text with the spoken word.
 #     Args:
 #         text: The text you want to replace the number with the spoken word.
@@ -20,7 +15,14 @@ def replace_number_with_spoken_word(text):
         if number.isdigit():
             text = text.replace(number, num2words(int(number), lang="en_US"))
     text = text.replace("%", "Percent")
+    text = text.replace(":", "")
     return text
+
+def create_text_with_fifteen(text, filename):
+    fifteen = FifteenAPI(show_debug = True)
+    character = "Twilight Sparkle"
+    text = replace_number_with_spoken_word(text)
+    fifteen.split_up_and_save(character, text, filename + ".mp3")
 
 def save_text_to_mp3(reddit_obj):
     """Saves Text to MP3 files.
@@ -49,7 +51,6 @@ def save_text_to_mp3(reddit_obj):
 
     if (useFifteenAI == 1):
         create_text_with_fifteen(reddit_obj["thread_title"], f"assets/mp3/title")
-        os.system(f"ffmpeg -y -i assets/mp3/title.wav assets/mp3/title.mp3")
     else:
         tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)        
         tts.save(f"assets/mp3/title.mp3")
@@ -70,7 +71,6 @@ def save_text_to_mp3(reddit_obj):
             if length > 50:
                 break
             create_text_with_fifteen(comment_text, f"assets/mp3/{idx}")
-            os.system(f"ffmpeg -y -i assets/mp3/{idx}.wav assets/mp3/{idx}.mp3")
             length += MP3(f"assets/mp3/{idx}.mp3").info.length
 
     print_substep("Saved Text to MP3 files successfully.", style="bold green")

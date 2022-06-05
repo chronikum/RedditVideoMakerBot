@@ -136,13 +136,16 @@ class FifteenAPI:
 		print(f"Splitting up text into {len(chunks)} chunks")
 		for idx, chunk in enumerate(chunks):
 			tts = self.get_tts_raw(character, chunk)
+			print("Requesting: " + chunk)
 			if tts["status"] == "OK" and tts["data"] is not None:
 				tts_data = tts["data"]
-			f = open(f"temp/{idx}_temp_file_.wav", 'ab')
-			f.write(tts_data)
-			f.close()
-			os.system(f"ffmpeg -y -i temp/{idx}_temp_file_.wav temp/{idx}_temp_file_.mp3")
-			infiles.append(f"temp/{idx}_temp_file_.mp3")
+				f = open(f"temp/{idx}_temp_file_.wav", 'ab')
+				f.write(tts_data)
+				f.close()
+				os.system(f"ffmpeg -y -i temp/{idx}_temp_file_.wav temp/{idx}_temp_file_.mp3")
+				infiles.append(f"temp/{idx}_temp_file_.mp3")
+			else:
+				raise Exception(f"Error while splitting up text into chunks: {tts['status']}")
 		data = []
 		clips = [AudioFileClip(c) for c in infiles]
 		final_clip = concatenate_audioclips(clips)
