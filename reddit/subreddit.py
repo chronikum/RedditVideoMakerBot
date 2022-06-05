@@ -1,12 +1,31 @@
+from re import sub
 from utils.console import print_markdown, print_step, print_substep
 import praw
 import random
 from dotenv import load_dotenv
 import os
 
+# replaces sensitive words with alternatives
+def replace_sensitive_words(text):
+    text = text.lower().replace("fuck", "frick")
+    text = text.lower().replace("shit", "shut")
+    text = text.lower().replace("bitch", "batch")
+    return text
 # lists all mods of a subreddit to filter out posts made by mods
 def listMods(reddit, subreddit):
     return [str(moderator) for moderator in reddit.subreddit(subreddit).moderator()]
+
+# Appends a video title the log file
+def append_video_title(title):
+    with open('encountered.txt', 'a') as f:
+        f.write(title)
+
+# we check if we encountered a topic before
+def check_if_topic_was_encountered_before(topic):
+    with open('encountered.txt', 'r') as f:
+        if topic in f.read():
+            return True
+    return False
 
 # gives flag if the comment was deleted
 def is_removed_or_deleted(submission):
@@ -66,22 +85,26 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=10)
-    submission = list(threads)[random.randrange(0, 10)]
+    threads = subreddit.hot(limit=25)
+    submission = list(threads)[random.randrange(0, 25)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
+    if check_if_topic_was_encountered_before(submission.title):
+        print_substep("This topic has already been encountered. Exiting...")
+        raise Exception("Topic has already been encountered")
+    else:
+        append_video_title(submission.title  + "\n")
     with open('video_title.txt', 'w') as f:
-        f.write(submission.title)
+        f.write(replace_sensitive_words(submission.title))
     try:
-
         content["thread_url"] = submission.url
-        content["thread_title"] = submission.title
+        content["thread_title"] = replace_sensitive_words(submission.title)
         content["comments"] = []
 
         for top_level_comment in submission.comments:
             if (top_level_comment.author not in listMods(reddit, randomSubReddit) and is_removed_or_deleted(top_level_comment) == False):
                 content["comments"].append(
                     {
-                        "comment_body": top_level_comment.body,
+                        "comment_body": replace_sensitive_words(top_level_comment.body),
                         "comment_url": top_level_comment.permalink,
                         "comment_id": top_level_comment.id,
                     }

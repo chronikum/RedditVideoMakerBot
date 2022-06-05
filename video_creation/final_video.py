@@ -84,7 +84,7 @@ def make_final_video(number_of_clips):
     number_of_threads = multiprocessing.cpu_count()
     print("Writing the final video with {} threads...".format(number_of_threads))
     final.write_videofile(
-        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k", threads=number_of_threads, verbose=False
+        "assets/final_video.mp4", fps=24, audio_codec="aac", audio_bitrate="192k", threads=number_of_threads, verbose=False
     )
 
     for i in range(0, number_of_clips):
