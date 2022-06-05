@@ -62,7 +62,7 @@ def make_final_video(number_of_clips):
     if (final.duration >= 60):
         final = final.set_duration(59)
     final.write_videofile(
-        "assets/final_video.mp4", fps=3, audio_codec="aac", audio_bitrate="192k"
+        "assets/final_video.mp4", fps=30, audio_codec="aac", audio_bitrate="192k"
     )
 
     for i in range(0, number_of_clips):
