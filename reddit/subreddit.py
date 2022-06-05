@@ -8,6 +8,19 @@ import os
 def listMods(reddit, subreddit):
     return [str(moderator) for moderator in reddit.subreddit(subreddit).moderator()]
 
+# gives flag if the comment was deleted
+def is_removed_or_deleted(submission):
+    if submission.author is None:
+        if submission.body == '[gelöscht]':
+            return True
+        if submission.body == '[entfernt]':
+            return True
+        return True
+    if submission.body == '[entfernt]':
+        return True
+    return False
+
+
 def get_subreddit_threads():
 
     """
@@ -65,7 +78,7 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if (top_level_comment.author not in listMods(reddit, randomSubReddit)):
+            if (top_level_comment.author not in listMods(reddit, randomSubReddit) and is_removed_or_deleted(top_level_comment) == False):
                 content["comments"].append(
                     {
                         "comment_body": top_level_comment.body,

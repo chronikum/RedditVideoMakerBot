@@ -1,3 +1,5 @@
+import os
+import sys
 from utils.console import print_markdown
 import time
 
@@ -13,11 +15,19 @@ print_markdown(
 
 time.sleep(3)
 
+def get_video_and_render_it():
+    try:
+        reddit_object = get_subreddit_threads()
 
-reddit_object = get_subreddit_threads()
+        length, number_of_comments = save_text_to_mp3(reddit_object)
+        download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
+        download_background()
+        chop_background_video(length)
+        final_video = make_final_video(number_of_comments)
+    except KeyboardInterrupt:
+        print("\n\nExiting...")
+        return sys.exit(0)
+    except Exception as e:
+        get_video_and_render_it()
 
-length, number_of_comments = save_text_to_mp3(reddit_object)
-download_screenshots_of_reddit_posts(reddit_object, number_of_comments)
-download_background()
-chop_background_video(length)
-final_video = make_final_video(number_of_comments)
+get_video_and_render_it()
