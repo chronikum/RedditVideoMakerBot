@@ -40,7 +40,7 @@ def save_text_to_mp3(reddit_obj):
     
     print("If any comment is longer than 200 characters, we do not use 15.ai at all to stick to their terms.")
     for idx0, comment in track(enumerate(reddit_obj["comments"]), "Validating..."):
-        comment["comment_body"] = comment["comment_body"].split("https://")[0]
+        comment["comment_body"] = comment["comment_body"].split("http")[0]
         comment["comment_body"] = replace_number_with_spoken_word(comment["comment_body"])
         if len(comment["comment_body"]) > 199:
             useFifteenAI = 0

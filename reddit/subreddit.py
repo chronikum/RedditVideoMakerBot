@@ -3,6 +3,7 @@ from utils.console import print_markdown, print_step, print_substep
 import praw
 import random
 from dotenv import load_dotenv
+from num2words import num2words
 import os
 
 # replaces sensitive words with alternatives
@@ -11,6 +12,7 @@ def replace_sensitive_words(text):
     text = text.lower().replace("shit", "shut")
     text = text.lower().replace("bitch", "batch")
     return text
+    
 # lists all mods of a subreddit to filter out posts made by mods
 def listMods(reddit, subreddit):
     return [str(moderator) for moderator in reddit.subreddit(subreddit).moderator()]
@@ -101,6 +103,8 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
+            if (top_level_comment.author in listMods(reddit, randomSubReddit)):
+                print("Author: " + str(top_level_comment.author))
             if (top_level_comment.author not in listMods(reddit, randomSubReddit) and is_removed_or_deleted(top_level_comment) == False):
                 content["comments"].append(
                     {

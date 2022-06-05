@@ -6,3 +6,8 @@ video_title.txt
 description.txt
 .DS_Store
 entfernt_entfernt.mp4
+temp/*.mp3
+encountered.txt
+example.wav
+.gitignore
+temp/0_temp_file_.wav
