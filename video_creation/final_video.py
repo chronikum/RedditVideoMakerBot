@@ -60,7 +60,7 @@ def make_final_video(number_of_clips):
 
     final = CompositeVideoClip([background_clip, image_concat, title_text_imgage])
     if (final.duration >= 60):
-        final = final.set_duration(60)
+        final = final.set_duration(59)
     final.write_videofile(
         "assets/final_video.mp4", fps=3, audio_codec="aac", audio_bitrate="192k"
     )
