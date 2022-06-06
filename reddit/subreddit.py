@@ -72,7 +72,7 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-    subReddits = ["AskReddit", "explainlikeimfive"]
+    subReddits = ["AskReddit"]
     randomSubReddit = random.choice(subReddits)
 
     if os.getenv("SUBREDDIT"):
