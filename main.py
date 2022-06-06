@@ -15,6 +15,10 @@ print_markdown(
 
 time.sleep(3)
 
+# we are using exceptions to restart the program.
+# this is really unclean and I know I deserve punishing for it
+# There for sure is an esaier solution, but you can throw exceptions anytime
+# and the program will restart. That is nice! :D
 def get_video_and_render_it():
     try:
         reddit_object = get_subreddit_threads()
