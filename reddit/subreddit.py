@@ -106,8 +106,6 @@ def get_subreddit_threads():
         content["comments"] = []
 
         for top_level_comment in submission.comments:
-            if (top_level_comment.author in listMods(reddit, randomSubReddit)):
-                print("Author: " + str(top_level_comment.author))
             if (top_level_comment.author not in listMods(reddit, randomSubReddit) and is_removed_or_deleted(top_level_comment) == False):
                 content["comments"].append(
                     {

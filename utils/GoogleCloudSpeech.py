@@ -9,8 +9,11 @@ def google_text_to_speech(text, filename):
 
 	# Build the voice request, select the language code ("en-US") and the ssml
 	# voice gender ("neutral")
+	# en-US-Wavenet-G is nice
+	# en-US-Wavenet-C is very calm
+	# en-US-Wavenet-F is a very bright voice
 	voice = texttospeech.VoiceSelectionParams(
-		language_code="en-GB", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
+		language_code="en-US", name="en-US-Wavenet-F", ssml_gender=texttospeech.SsmlVoiceGender.FEMALE
 	)
 
 	# Select the type of audio file you want returned
