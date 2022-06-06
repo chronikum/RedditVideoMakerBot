@@ -97,6 +97,9 @@ def get_subreddit_threads():
         append_video_title(submission.title  + "\n")
     with open('video_title.txt', 'w') as f:
         f.write(replace_sensitive_words(submission.title))
+    
+    if (len(replace_sensitive_words(submission.title)) > 91):
+        raise Exception("Video title is too long")
     try:
         content["thread_url"] = submission.url
         content["thread_title"] = replace_sensitive_words(submission.title)

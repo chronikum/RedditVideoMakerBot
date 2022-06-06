@@ -9,7 +9,6 @@ console = Console()
 
 def print_markdown(text):
     """Prints a rich info message. Support Markdown syntax."""
-
     md = Padding(Markdown(text), 2)
     console.print(md)
 
