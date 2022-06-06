@@ -105,8 +105,9 @@ def get_subreddit_threads():
         content["thread_title"] = replace_sensitive_words(submission.title)
         content["comments"] = []
 
+        all_mods = listMods(reddit, randomSubReddit)
         for top_level_comment in submission.comments:
-            if (top_level_comment.author not in listMods(reddit, randomSubReddit) and is_removed_or_deleted(top_level_comment) == False):
+            if (top_level_comment.author not in all_mods and is_removed_or_deleted(top_level_comment) == False):
                 content["comments"].append(
                     {
                         "comment_body": replace_sensitive_words(top_level_comment.body),
