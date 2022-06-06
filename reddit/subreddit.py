@@ -72,7 +72,7 @@ def get_subreddit_threads():
         username=os.getenv("REDDIT_USERNAME"),
         password=passkey,
     )
-    subReddits = ["AskReddit", "explainlikeimfive", "LifeProTips"]
+    subReddits = ["AskReddit", "explainlikeimfive"]
     randomSubReddit = random.choice(subReddits)
 
     if os.getenv("SUBREDDIT"):
@@ -87,8 +87,8 @@ def get_subreddit_threads():
             subreddit = reddit.subreddit("askreddit")
             print_substep("Subreddit not defined. Using AskReddit.")
 
-    threads = subreddit.hot(limit=25)
-    submission = list(threads)[random.randrange(0, 25)]
+    threads = subreddit.hot(limit=15)
+    submission = list(threads)[random.randrange(0, 15)]
     print_substep(f"Video will be: {submission.title} :thumbsup:")
     if check_if_topic_was_encountered_before(submission.title):
         print_substep("This topic has already been encountered. Exiting...")
