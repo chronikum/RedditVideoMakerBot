@@ -11,6 +11,8 @@ def replace_sensitive_words(text):
     text = text.lower().replace("fuck", "frick")
     text = text.lower().replace("shit", "shut")
     text = text.lower().replace("bitch", "batch")
+    if (text.lower().find(" sex") != -1):
+        raise Exception("NFSW Content!")
     return text
     
 # lists all mods of a subreddit to filter out posts made by mods
