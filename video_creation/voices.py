@@ -52,7 +52,7 @@ def save_text_to_mp3(reddit_obj):
     if (useFifteenAI == 1):
         create_text_with_fifteen(reddit_obj["thread_title"], f"assets/mp3/title")
     else:
-        tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)        
+        tts = gTTS(text=reddit_obj["thread_title"], lang="en", slow=False)
         tts.save(f"assets/mp3/title.mp3")
         useFifteenAI = 0
         
