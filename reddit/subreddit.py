@@ -11,6 +11,8 @@ def check_title(text):
 		raise Exception("NFSW Content!")
 	if (text.lower().find("sex ") != -1):
 		raise Exception("NFSW Content!")
+	if (text.lower().find("porn") != -1):
+		raise Exception("NFSW Content!")
 # replaces sensitive words with alternatives
 def replace_sensitive_words(text):
 	text = text.lower().replace("fuck", "frick")
@@ -19,6 +21,7 @@ def replace_sensitive_words(text):
 	text = text.lower().replace("penis", "pepe")
 	text = text.lower().replace("vagina", "vava")
 	text = text.lower().replace("sex", "six")
+	text = text.lower().replace("porn", "purn")
 	return text
 	
 # lists all mods of a subreddit to filter out posts made by mods
@@ -112,7 +115,7 @@ def get_subreddit_threads():
 	with open('video_title.txt', 'w') as f:
 		f.write(submission.title)
 	submission.title = replace_sensitive_words(submission.title)
-	if (len(submission.title) > 91):
+	if (len(submission.title) > 140):
 		raise Exception("Video title is too long")
 	try:
 		content["thread_url"] = submission.url
