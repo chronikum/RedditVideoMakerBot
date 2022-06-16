@@ -22,6 +22,7 @@ def replace_sensitive_words(text):
 	text = text.lower().replace("vagina", "vava")
 	text = text.lower().replace("sex", "six")
 	text = text.lower().replace("porn", "purn")
+	text = text.lower().replace("rape", "rope")
 	return text
 	
 # lists all mods of a subreddit to filter out posts made by mods
@@ -115,7 +116,7 @@ def get_subreddit_threads():
 	with open('video_title.txt', 'w') as f:
 		f.write(submission.title)
 	submission.title = replace_sensitive_words(submission.title)
-	if (len(submission.title) > 140):
+	if (len(submission.title) > 90):
 		raise Exception("Video title is too long")
 	try:
 		content["thread_url"] = submission.url
