@@ -9,9 +9,15 @@ import os
 def check_title(text):
 	if (text.lower().find(" sex") != -1):
 		raise Exception("NFSW Content!")
-	if (text.lower().find("sex ") != -1):
+	if (text.lower().find("sex") != -1):
 		raise Exception("NFSW Content!")
 	if (text.lower().find("porn") != -1):
+		raise Exception("NFSW Content!")
+	if (text.lower().find("dick") != -1):
+		raise Exception("NFSW Content!")
+	if (text.lower().find("penis") != -1):
+		raise Exception("NFSW Content!")
+	if (text.lower().find("fuck") != -1):
 		raise Exception("NFSW Content!")
 # replaces sensitive words with alternatives
 def replace_sensitive_words(text):
